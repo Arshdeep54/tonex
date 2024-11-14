@@ -39,10 +39,10 @@ const CreditScore: React.FC = () => {
       <div className="flex justify-center items-center">
         <Gauge
           width={300}
-          height={300} // Ensure this is a perfect circle
+          height={250} // Ensure this is a perfect circle
           value={percentage}
-          startAngle={-90}
-          endAngle={90}
+          startAngle={-110}
+          endAngle={110}
           className={gaugeClasses.root}
           cornerRadius="50%"
           sx={(theme) => ({
@@ -59,7 +59,7 @@ const CreditScore: React.FC = () => {
             },
             [`& .${gaugeClasses.valueText}`]: {
               fontSize: 36,
-              transform: "translate(0px, 42px)", 
+              transform: "translate(0px, 38px)", 
               color: "white !important",
             },
           })}

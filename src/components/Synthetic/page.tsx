@@ -1,12 +1,10 @@
-
-
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const SyntheticWallet = () => {
-  const [fromChain, setFromChain] = useState('Solana');
-  const [fromToken, setFromToken] = useState('SOL');
-  const [toChain, setToChain] = useState('TON');
-  const [toToken, setToToken] = useState('TONex');
+  const [fromChain, setFromChain] = useState("Solana");
+  const [fromToken, setFromToken] = useState("SOL");
+  const [toChain, setToChain] = useState("TON");
+  const [toToken, setToToken] = useState("TONex");
   const [amount, setAmount] = useState(500);
   const [amountInUsd, setAmountInUsd] = useState(50000);
 
@@ -28,7 +26,7 @@ const SyntheticWallet = () => {
 
   return (
     <div className="p-6 bg-gradient-to-r from-[#1f2937] to-[#334155] rounded-lg shadow-lg max-w-lg mx-auto text-white">
-      <h2 className="text-3xl font-semibold mb-4">Wallet</h2>
+      <h2 className="text-3xl font-semibold mb-4">Synthetic tokens</h2>
 
       <div className="flex items-center space-x-4 mb-4">
         <div className="flex-1">
@@ -63,7 +61,7 @@ const SyntheticWallet = () => {
         <div className="flex-1">
           <div className="w-full p-2 border border-gray-500 rounded-md bg-gray-700 text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
             <div className="flex items-center justify-between">
-              <span>TON</span>
+              <span>TON </span>
               <span className="text-gray-400">TONex</span>
             </div>
           </div>
@@ -95,12 +93,12 @@ const SyntheticWallet = () => {
             value={amountInUsd.toLocaleString()}
             readOnly
           />
-          <button
+        </div>
+        <button
             className="w-full py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
           >
             Exchange
           </button>
-        </div>
       </div>
     </div>
   );

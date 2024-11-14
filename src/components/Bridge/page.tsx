@@ -1,142 +1,177 @@
-// components/CCIPUI.tsx
 import React, { useState } from "react";
+import data from "../tokenlist.json";
+const SyntheticWallet = () => {
+  const [fromChain, setFromChain] = useState(data[0].chainName);
+  const [fromToken, setFromToken] = useState(data[0].tokens[0].name);
+  const [toChain, setToChain] = useState(data[1].chainName);
+  const [toToken, setToToken] = useState(data[1].tokens[0].name);
+  const [amount, setAmount] = useState(500);
+  const [amountInUsd, setAmountInUsd] = useState(50000);
 
-const Bridge: React.FC = () => {
-  const [chain1, setChain1] = useState("");
-  const [token1, setToken1] = useState("");
-  const [chain2, setChain2] = useState("");
-  const [token2, setToken2] = useState("");
-  const [amount, setAmount] = useState("");
-  const [amountInDollars, setAmountInDollars] = useState("");
-  const maxAmount = 1000; // Set the max amount you have
-
-  const handleExchange = () => {
-    console.log(`Exchanging ${amount} of ${token1} on ${chain1} to ${token2} on ${chain2}`);
-  };
+  const [tokensForSelectedChain, setTokensForSelectedChain] = useState<
+    string[]
+  >(data[0].tokens.map((token) => token.ticker));
 
   const handleSwap = () => {
-    setChain1(chain2);
-    setToken1(token2);
-    setChain2(chain1);
-    setToken2(token1);
+    setFromChain(toChain);
+    setFromToken(toToken);
+    // TON and TONex are fixed
   };
 
   const handleMaxClick = () => {
-    setAmount(maxAmount.toString());
-    // Update conversion value if necessary
-    setAmountInDollars((maxAmount * 1.5).toString()); // Example conversion rate of 1.5
+    setAmount(1000);
+    setAmountInUsd(50000);
   };
 
+  const handleChainChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedChain = e.target.value;
+    setFromChain(selectedChain);
+
+    // Find the selected chain and set its tokens
+    const selectedChainData = data.find(
+      (chain) => chain.chainName === selectedChain
+    );
+    if (selectedChainData) {
+      setTokensForSelectedChain(
+        selectedChainData.tokens.map((token) => token.ticker)
+      ); // Assuming `ticker` is the token identifier
+    }
+    setFromToken(""); // Reset the token selection when the chain changes
+  };
   const handleAmountChange = (value: string) => {
-    setAmount(value);
-    const convertedAmount = parseFloat(value) * 1.5; // Example conversion rate of 1.5 to USD
-    setAmountInDollars(convertedAmount ? convertedAmount.toFixed(2) : "");
+    setAmount(parseInt(value));
+    setAmountInUsd(parseInt(value) * 100);
   };
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-lg max-w-lg mx-auto">
-      <h2 className="text-3xl font-semibold text-gray-800 mb-4">Cross Chain Interoperability</h2>
+    <div className="p-6 bg-gradient-to-r from-[#1f2937] to-[#334155] rounded-lg shadow-lg max-w-lg mx-auto text-white">
+      <h2 className="text-3xl font-semibold mb-4">Bridge</h2>
 
-      {/* Chain 1, Swap Button, and Chain 2 in a Horizontal Layout */}
-      <div className="flex items-center space-x-4 mb-4">
-        {/* Chain 1 and Token 1 Selection */}
-        <div className="flex-1">
-          <label className="block text-gray-600 text-sm font-medium mb-1">Select Chain</label>
-          <select
-            className="w-full p-2 border border-gray-300 rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
-            value={chain1}
-            onChange={(e) => setChain1(e.target.value)}
-          >
-            <option value="" disabled>Select Chain</option>
-            <option value="Ethereum">Ethereum</option>
-            <option value="Polygon">Polygon</option>
-            <option value="Binance Smart Chain">Binance Smart Chain</option>
-          </select>
+      <div className="flex flex-col items-center space-y-4 mb-4">
+        {/* From Chain and Token Selection */}
+        <div className="flex space-x-4 w-full">
+          <div className="flex-1 relative">
+            {/* Chain Icon and Select */}
+            <img
+              src={
+                data.find((chain) => chain.chainName === fromChain)?.img ||
+                data[0].img
+              }
+              alt={`${fromChain} icon`}
+              className="absolute left-2 top-1/2 transform -translate-y-1/2 w-6 h-6"
+            />
+            <select
+              className="w-full pl-10 p-2 border border-gray-500 rounded-md bg-gray-700 text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={fromChain}
+              onChange={handleChainChange}
+            >
+              {data.map((chain) => (
+                <option key={chain.chainID} value={chain.chainName}>
+                  {chain.chainName}
+                </option>
+              ))}
+            </select>
+          </div>
 
-          <label className="block text-gray-600 text-sm font-medium mb-1">Select Token</label>
-          <select
-            className="w-full p-2 border border-gray-300 rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={token1}
-            onChange={(e) => setToken1(e.target.value)}
-          >
-            <option value="" disabled>Select Token</option>
-            <option value="ETH">ETH</option>
-            <option value="USDT">USDT</option>
-            <option value="DAI">DAI</option>
-          </select>
+          <div className="flex-1 relative">
+            {/* Token Select */}
+            <select
+              className="w-full pl-10 p-2 border border-gray-500 rounded-md bg-gray-700 text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={fromToken}
+              onChange={(e) => setFromToken(e.target.value)}
+            >
+              {tokensForSelectedChain.map((tokenTicker) => (
+                <option key={tokenTicker} value={tokenTicker}>
+                  {tokenTicker}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {/* Swap Button */}
         <button
           onClick={handleSwap}
-          className="py-2 px-4 bg-gray-200 text-gray-800 rounded-full hover:bg-gray-300 transition"
+          className="py-2 px-4 bg-gray-700 text-gray-300 rounded-full hover:bg-gray-600 transition"
         >
           ⇅
         </button>
 
-        {/* Chain 2 and Token 2 Selection */}
-        <div className="flex-1">
-          <label className="block text-gray-600 text-sm font-medium mb-1">Select Chain</label>
-          <select
-            className="w-full p-2 border border-gray-300 rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
-            value={chain2}
-            onChange={(e) => setChain2(e.target.value)}
-          >
-            <option value="" disabled>Select Chain</option>
-            <option value="Ethereum">Ethereum</option>
-            <option value="Polygon">Polygon</option>
-            <option value="Binance Smart Chain">Binance Smart Chain</option>
-          </select>
+        {/* To Chain and Token Selection */}
+        <div className="flex space-x-4 w-full">
+          <div className="flex-1 relative">
+            {/* Chain Icon and Select */}
+            <img
+              src={
+                data.find((chain) => chain.chainName === toChain)?.img ||
+                data[0].img
+              }
+              alt={`${toChain} icon`}
+              className="absolute left-2 top-1/2 transform -translate-y-1/2 w-6 h-6"
+            />
+            <select
+              className="w-full pl-10 p-2 border border-gray-500 rounded-md bg-gray-700 text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={toChain}
+              onChange={handleChainChange}
+            >
+              {data.map((chain) => (
+                <option key={chain.chainID} value={chain.chainName}>
+                  {chain.chainName}
+                </option>
+              ))}
+            </select>
+          </div>
 
-          <label className="block text-gray-600 text-sm font-medium mb-1">Select Token</label>
-          <select
-            className="w-full p-2 border border-gray-300 rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={token2}
-            onChange={(e) => setToken2(e.target.value)}
-          >
-            <option value="" disabled>Select Token</option>
-            <option value="ETH">ETH</option>
-            <option value="USDT">USDT</option>
-            <option value="DAI">DAI</option>
-          </select>
+          <div className="flex-1 relative">
+            {/* Token Select */}
+            <select
+              className="w-full pl-10 p-2 border border-gray-500 rounded-md bg-gray-700 text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={toToken}
+              onChange={(e) => setToToken(e.target.value)}
+            >
+              {tokensForSelectedChain.map((tokenTicker) => (
+                <option key={tokenTicker} value={tokenTicker}>
+                  {tokenTicker}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
-      {/* Amount Input and Conversion to USD */}
-      <div className="mb-4">
-        <div className="flex items-center justify-between">
-          <label className="block text-gray-600 text-sm font-medium">Amount</label>
-          <button onClick={handleMaxClick} className="text-blue-600 text-sm focus:outline-none">
+      <div className="mb-4 space-y-2">
+        <div className="relative">
+          <input
+            type="number"
+            className="w-full p-2 border border-gray-500 rounded-md bg-gray-700 text-2xl font-medium text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Amount"
+            value={amount}
+            onChange={(e) => handleAmountChange(e.target.value)}
+          />
+          <button
+            onClick={handleMaxClick}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-500 text-sm focus:outline-none"
+          >
             Max
           </button>
         </div>
-        <input
-          type="number"
-          className="w-full p-2 mb-2 border border-gray-300 rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Enter amount"
-          value={amount}
-          onChange={(e) => handleAmountChange(e.target.value)}
-        />
-        
-        <label className="block text-gray-600 text-sm font-medium">Amount in USD</label>
-        <input
-          type="text"
-          className="w-full p-2 border border-gray-300 rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="0.00"
-          value={amountInDollars}
-          readOnly
-        />
-      </div>
 
-      {/* Exchange Button */}
-      <button
-        onClick={handleExchange}
-        className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
-      >
-        Exchange
-      </button>
+        <div className="relative flex items-center space-x-2">
+          <span className="absolute left-2 text-gray-300">$</span>
+          <input
+            type="text"
+            className="pl-6 flex-1 p-2 border border-gray-500 rounded-md bg-gray-700 text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Amount in USD"
+            value={amountInUsd.toLocaleString()}
+            readOnly
+          />
+        </div>
+        <button className="w-full py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition">
+          Exchange
+        </button>
+      </div>
     </div>
   );
 };
 
-export default Bridge;
+export default SyntheticWallet;
