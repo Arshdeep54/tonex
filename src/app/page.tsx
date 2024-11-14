@@ -1,62 +1,75 @@
 'use client';
 
-import { Section, Cell, Image, List } from '@telegram-apps/telegram-ui';
-import { useTranslations } from 'next-intl';
-
-import { Link } from '@/components/Link/Link';
-import { LocaleSwitcher } from '@/components/LocaleSwitcher/LocaleSwitcher';
-import { Page } from '@/components/Page';
-
-import tonSvg from './_assets/ton.svg';
-
+import { useState } from "react";
+import { TonConnectButton, TonConnectUIProvider } from "@tonconnect/ui-react";
+import SignalCellularAltIcon from '@mui/icons-material/SignalCellularAlt';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
+import SwapCallsIcon from '@mui/icons-material/SwapCalls';
 export default function Home() {
-  const t = useTranslations('i18n');
+  const [activeView, setActiveView] = useState("creditScore");
+
+  // Handle view change
+  const handleViewChange = (view: string) => {
+    setActiveView(view);
+  };
 
   return (
-    <Page back={false}>
-      <List>
-        <Section
-          header="Features"
-          footer="You can use these pages to learn more about features, provided by Telegram Mini Apps and other useful projects"
-        >
-          <Link href="/ton-connect">
-            <Cell
-              before={
-                <Image
-                  src={tonSvg.src}
-                  style={{ backgroundColor: '#007AFF' }}
-                />
-              }
-              subtitle="Connect your TON wallet"
+    <>
+      <TonConnectUIProvider manifestUrl="https://blush-major-turkey-395.mypinata.cloud/ipfs/QmetdVVHN5ttyi4tv4yGb3u6ugAihfu6ZjHUUfHhJz1ko7">
+        <div className="min-h-screen flex flex-col bg-gray-50">
+          {/* Top Bar Section */}
+          <div className="flex justify-between items-center bg-blue-600 text-white p-4">
+            <div className="text-xl font-semibold">Host Name</div>
+            <TonConnectButton className="ton-connect-button" />
+          </div>
+
+          {/* Middle View Section */}
+          <div className="flex-grow p-4">
+            {activeView === "creditScore" && (
+              <div className="p-4 bg-white rounded-lg shadow-lg">
+                <h2 className="text-2xl font-semibold">Credit Score View</h2>
+                <p>Your credit score details go here...</p>
+              </div>
+            )}
+
+            {activeView === "exchange" && (
+              <div className="p-4 bg-white rounded-lg shadow-lg">
+                <h2 className="text-2xl font-semibold">Exchange View</h2>
+                <p>Exchange functionality goes here...</p>
+              </div>
+            )}
+
+            {activeView === "swap" && (
+              <div className="p-4 bg-white rounded-lg shadow-lg">
+                <h2 className="text-2xl font-semibold">Swap View</h2>
+                <p>Swap functionality goes here...</p>
+              </div>
+            )}
+          </div>
+
+          {/* Bottom Navigation Section */}
+          <div className="flex justify-around bg-gray-800 text-white p-4">
+            <button
+              className={`flex-1 text-center py-2 ${activeView === "creditScore" ? "bg-blue-500" : "bg-gray-700"} rounded-lg`}
+              onClick={() => handleViewChange("creditScore")}
             >
-              TON Connect
-            </Cell>
-          </Link>
-        </Section>
-        <Section
-          header="Application Launch Data"
-          footer="These pages help developer to learn more about current launch information"
-        >
-          <Link href="/init-data">
-            <Cell subtitle="User data, chat information, technical data">
-              Init Data
-            </Cell>
-          </Link>
-          <Link href="/launch-params">
-            <Cell subtitle="Platform identifier, Mini Apps version, etc.">
-              Launch Parameters
-            </Cell>
-          </Link>
-          <Link href="/theme-params">
-            <Cell subtitle="Telegram application palette information">
-              Theme Parameters
-            </Cell>
-          </Link>
-        </Section>
-        <Section header={t('header')} footer={t('footer')}>
-          <LocaleSwitcher/>
-        </Section>
-      </List>
-    </Page>
+            <SignalCellularAltIcon/> 
+            </button>
+            <button
+              className={`flex-1 text-center py-2 ${activeView === "exchange" ? "bg-blue-500" : "bg-gray-700"} rounded-lg`}
+              onClick={() => handleViewChange("exchange")}
+            >
+              <SwapCallsIcon/>
+            </button>
+            <button
+              className={`flex-1 text-center py-2 ${activeView === "swap" ? "bg-blue-500" : "bg-gray-700"} rounded-lg`}
+              onClick={() => handleViewChange("swap")}
+            >
+              <SwapHorizIcon/>
+            </button>
+          </div>
+        </div>
+      </TonConnectUIProvider>
+    </>
   );
 }
