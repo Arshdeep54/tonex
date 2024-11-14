@@ -1,75 +1,83 @@
-'use client';
-
-import { useState } from "react";
+"use client";
+import React, { useState } from "react";
 import { TonConnectButton, TonConnectUIProvider } from "@tonconnect/ui-react";
-import SignalCellularAltIcon from '@mui/icons-material/SignalCellularAlt';
-import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
-import SwapCallsIcon from '@mui/icons-material/SwapCalls';
-export default function Home() {
+import SignalCellularAltIcon from "@mui/icons-material/SignalCellularAlt";
+import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
+import SwapCallsIcon from "@mui/icons-material/SwapCalls";
+import CreditScore from "@/components/CreditScore/page";
+import CCIPUI from "@/components/Synthetic/page";
+import Bridge from "@/components/Bridge/page";
+import Collateral from "@/components/Collateral/page";
+
+const Home = () => {
   const [activeView, setActiveView] = useState("creditScore");
 
-  // Handle view change
   const handleViewChange = (view: string) => {
     setActiveView(view);
   };
 
   return (
-    <>
-      <TonConnectUIProvider manifestUrl="https://blush-major-turkey-395.mypinata.cloud/ipfs/QmetdVVHN5ttyi4tv4yGb3u6ugAihfu6ZjHUUfHhJz1ko7">
-        <div className="min-h-screen flex flex-col bg-gray-50">
-          {/* Top Bar Section */}
-          <div className="flex justify-between items-center bg-blue-600 text-white p-4">
-            <div className="text-xl font-semibold">Host Name</div>
-            <TonConnectButton className="ton-connect-button" />
-          </div>
-
-          {/* Middle View Section */}
-          <div className="flex-grow p-4">
-            {activeView === "creditScore" && (
-              <div className="p-4 bg-white rounded-lg shadow-lg">
-                <h2 className="text-2xl font-semibold">Credit Score View</h2>
-                <p>Your credit score details go here...</p>
-              </div>
-            )}
-
-            {activeView === "exchange" && (
-              <div className="p-4 bg-white rounded-lg shadow-lg">
-                <h2 className="text-2xl font-semibold">Exchange View</h2>
-                <p>Exchange functionality goes here...</p>
-              </div>
-            )}
-
-            {activeView === "swap" && (
-              <div className="p-4 bg-white rounded-lg shadow-lg">
-                <h2 className="text-2xl font-semibold">Swap View</h2>
-                <p>Swap functionality goes here...</p>
-              </div>
-            )}
-          </div>
-
-          {/* Bottom Navigation Section */}
-          <div className="flex justify-around bg-gray-800 text-white p-4">
-            <button
-              className={`flex-1 text-center py-2 ${activeView === "creditScore" ? "bg-blue-500" : "bg-gray-700"} rounded-lg`}
-              onClick={() => handleViewChange("creditScore")}
-            >
-            <SignalCellularAltIcon/> 
-            </button>
-            <button
-              className={`flex-1 text-center py-2 ${activeView === "exchange" ? "bg-blue-500" : "bg-gray-700"} rounded-lg`}
-              onClick={() => handleViewChange("exchange")}
-            >
-              <SwapCallsIcon/>
-            </button>
-            <button
-              className={`flex-1 text-center py-2 ${activeView === "swap" ? "bg-blue-500" : "bg-gray-700"} rounded-lg`}
-              onClick={() => handleViewChange("swap")}
-            >
-              <SwapHorizIcon/>
-            </button>
-          </div>
+    <TonConnectUIProvider manifestUrl="https://blush-major-turkey-395.mypinata.cloud/ipfs/QmetdVVHN5ttyi4tv4yGb3u6ugAihfu6ZjHUUfHhJz1ko7">
+      <div className="min-h-screen flex flex-col bg-gradient-to-r from-[#1f2937] to-[#334155]">
+        {/* Top Bar Section */}
+        <div className="flex justify-between items-center bg-blue-500 text-white p-4">
+          <div className="text-xl font-semibold">Host Name</div>
+          <TonConnectButton className="ton-connect-button" />
         </div>
-      </TonConnectUIProvider>
-    </>
+
+        {/* Middle View Section */}
+        <div className="flex-grow p-8 gap-8">
+          {activeView === "creditScore" && (
+            <div className="flex flex-col justify-between items-center">
+              <div>
+                <CreditScore />
+              </div>
+              <div className="mt-2">
+                <Collateral />
+              </div>
+            </div>
+          )}
+          {activeView === "exchange" && (
+            <div className="col-span-2">
+              <CCIPUI />
+            </div>
+          )}
+          {activeView === "swap" && (
+            <div className="col-span-2">
+              <Bridge />
+            </div>
+          )}
+        </div>
+        {/* Bottom Navigation Section */}
+        <div className="fixed bottom-0 left-0 right-0 bg-gray-700 text-white p-4 flex justify-around">
+          <button
+            className={`flex-1 text-center py-2 ${
+              activeView === "creditScore" ? "bg-blue-500" : "bg-gray-600"
+            } rounded-lg`}
+            onClick={() => handleViewChange("creditScore")}
+          >
+            <SignalCellularAltIcon />
+          </button>
+          <button
+            className={`flex-1 text-center py-2 ${
+              activeView === "exchange" ? "bg-blue-500" : "bg-gray-600"
+            } rounded-lg`}
+            onClick={() => handleViewChange("exchange")}
+          >
+            <SwapCallsIcon />
+          </button>
+          <button
+            className={`flex-1 text-center py-2 ${
+              activeView === "swap" ? "bg-blue-500" : "bg-gray-600"
+            } rounded-lg`}
+            onClick={() => handleViewChange("swap")}
+          >
+            <SwapHorizIcon />
+          </button>
+        </div>
+      </div>
+    </TonConnectUIProvider>
   );
-}
+};
+
+export default Home;
