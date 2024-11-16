@@ -35,18 +35,12 @@ jobs:
           path: out # Path to the output directory containing the static files
 
   deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     needs: build
-    permissions:
-      pages: write # Required for deployment to GitHub Pages
-      id-token: write
     steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: github-pages # Download the "github-pages" artifact uploaded in the build job
-
       - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
-        with:
-          folder: out # Deploy the contents of the 'out' folder
