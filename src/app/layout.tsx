@@ -7,8 +7,6 @@ import "normalize.css/normalize.css";
 import "./_assets/globals.css";
 import { TonConnectUIProvider } from "@tonconnect/ui-react";
 import Web3Provider from "@/providers/Web3Provider";
-import { TelegramProvider } from "@/providers/TelegramProvider";
-import Layout from "@/providers/Layout";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -33,9 +31,8 @@ export default async function RootLayout({ children }: PropsWithChildren) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
          <Web3Provider>
-         <TelegramProvider>
-            <Layout>{children}</Layout>
-          </TelegramProvider>
+            {children}
+          
         </Web3Provider>
       </body>
     </html>
