@@ -14,7 +14,7 @@ import CreditScore from "@/components/CreditScore/page";
 import CCIPUI from "@/components/Synthetic/page";
 import Bridge from "@/components/Bridge/page";
 import Collateral from "@/components/Collateral/page";
-import bridgeImage from "@/app/_assets/bridge.png";
+import bridgeImage from "@/assets/bridge.png";
 import { log } from "console";
 import WebApp from "@twa-dev/sdk";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
