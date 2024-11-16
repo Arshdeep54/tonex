@@ -7,10 +7,16 @@ const nextConfig = {
     config.externals.push("pino-pretty", "lokijs", "encoding");
     return config;
   },
-  output: "export",
+  // Remove output: "export" as we want server-side rendering
   images: {
-    unoptimized: true, 
+    unoptimized: true,
   },
+  // Add proper static file handling
+  experimental: {
+    appDir: true,
+  },
+  distDir: '.next',
+  poweredByHeader: false,
 };
 
 export default nextConfig;

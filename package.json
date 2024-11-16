@@ -6,9 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "export": "next export",
+    "clean": "rm -rf .next",
     "lint": "next lint",
-    "configbot": "node configure.mjs"
+    "configbot": "node configure.mjs",
+    "prebuild": "npm run clean"
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",
