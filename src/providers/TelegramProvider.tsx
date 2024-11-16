@@ -8,6 +8,7 @@ import { ErrorPage } from "@/components/ErrorPage";
 import { useTelegramMock } from "@/hooks/useTelegramMock";
 import { useDidMount } from "@/hooks/useDidMount";
 import Image from "next/image";
+import { NODE_ENV, NODE_ENV_DEV } from "@/utils/config";
 
 // function App(props: PropsWithChildren) {
 //   const lp = useLaunchParams();

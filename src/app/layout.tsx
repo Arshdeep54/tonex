@@ -33,8 +33,8 @@ export default async function RootLayout({ children }: PropsWithChildren) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
          <Web3Provider>
-          <TelegramProvider>
-            {children}
+         <TelegramProvider>
+            <Layout>{children}</Layout>
           </TelegramProvider>
         </Web3Provider>
       </body>
