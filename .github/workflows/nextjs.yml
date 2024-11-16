@@ -18,14 +18,14 @@ jobs:
       - name: install dependencies
         run: npm install
       - name: Build
-        run: npm run build
+        run: npm run build && npm run export
         env:
           CI: false
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.4
         with:
           branch: github-pages # The branch the action should deploy to.
-          folder: dist # The folder the action should deploy.
+          folder: out # The folder the action should deploy.
 
 permissions:
   contents: write
