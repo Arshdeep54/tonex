@@ -1,107 +1,268 @@
-import React, { useState } from "react";
+"use client";
+import React, { useState, useEffect } from "react";
+import SwapVertIcon from "@mui/icons-material/SwapVert";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
+import data from "../tokenlist.json";
 
-const SyntheticWallet = () => {
-  const [fromChain, setFromChain] = useState("Solana");
-  const [fromToken, setFromToken] = useState("SOL");
-  const [toChain, setToChain] = useState("TON");
-  const [toToken, setToToken] = useState("TONex");
-  const [amount, setAmount] = useState(500);
-  const [amountInUsd, setAmountInUsd] = useState(50000);
+interface Token {
+  name: string;
+  ticker: string;
+  address: string;
+}
 
-  const handleSwap = () => {
-    setFromChain(toChain);
-    setFromToken(toToken);
-    // TON and TONex are fixed
+interface ChainData {
+  chainID: string;
+  chainName: string;
+  tokens: Token[];
+  img: string;
+}
+
+const chainData = data as unknown as ChainData[];
+
+// Define TON chain data
+const tonChainData = {
+  chainID: "ton",
+  chainName: "TON",
+  img: "https://cryptologos.cc/logos/toncoin-ton-logo.svg?v=035", // Make sure to add TON logo to public folder
+  tokens: [
+    {
+      name: "TONex",
+      ticker: "TONex",
+      address: "0x...",
+    },
+  ],
+};
+
+const Synthetic = () => {
+  const [fromChain, setFromChain] = useState<string>(chainData[0].chainName);
+  const [fromToken, setFromToken] = useState<string>(
+    chainData[0].tokens[0].ticker
+  );
+  const [amount, setAmount] = useState<string>("");
+  const [fromTokens, setFromTokens] = useState<Token[]>(chainData[0].tokens);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
+
+  const getUsdValue = (amt: string): number => {
+    const value = parseFloat(amt || "0") * 100;
+    return isNaN(value) ? 0 : value;
   };
 
-  const handleMaxClick = () => {
-    setAmount(1000);
-    setAmountInUsd(50000);
+  const handleFromChainChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const chain = e.target.value;
+    const chainData = data.find((c) => c.chainName === chain);
+
+    if (!chainData) return;
+
+    setFromChain(chain);
+    setFromTokens(chainData.tokens);
+    if (chainData.tokens.length > 0) {
+      setFromToken(chainData.tokens[0].ticker);
+    }
   };
 
-  const handleAmountChange = (value: string) => {
-    setAmount(parseInt(value));
-    setAmountInUsd(parseInt(value) * 100);
+  const handleMaxAmount = () => {
+    setAmount("1000");
+  };
+
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value === "" || /^\d*\.?\d*$/.test(value)) {
+      setAmount(value);
+    }
+  };
+
+  const getChainImage = (chainName: string): string => {
+    if (chainName === "TON") return tonChainData.img;
+    const chain = data.find((c) => c.chainName === chainName);
+    return (
+      chain?.img ||
+      "https://e7.pngegg.com/pngimages/944/167/png-clipart-blockchain-computer-icons-blockchain-miscellaneous-angle-thumbnail.png"
+    );
+  };
+
+  const isFormValid = (): boolean => {
+    const amountNum = parseFloat(amount);
+    return (
+      amount !== "" && !isNaN(amountNum) && amountNum > 0 && fromToken !== ""
+    );
+  };
+
+  const handleSynthesize = async () => {
+    if (!isFormValid()) return;
+
+    setIsLoading(true);
+    // Simulate API call
+    setTimeout(() => {
+      setIsLoading(false);
+      // Show success message or handle next steps
+    }, 2000);
   };
 
   return (
-    <div className="p-6 bg-gradient-to-r from-[#1f2937] to-[#334155] rounded-lg shadow-lg max-w-lg mx-auto text-white">
-      <h2 className="text-3xl font-semibold mb-4">Synthetic tokens</h2>
-
-      <div className="flex items-center space-x-4 mb-4">
-        <div className="flex-1">
-          <select
-            className="w-full p-2 border border-gray-500 rounded-md bg-gray-700 text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
-            value={fromChain}
-            onChange={(e) => setFromChain(e.target.value)}
-          >
-            <option value="Solana">Solana</option>
-            <option value="Ethereum">Ethereum</option>
-            <option value="Bitcoin">Bitcoin</option>
-          </select>
-
-          <select
-            className="w-full p-2 border border-gray-500 rounded-md bg-gray-700 text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={fromToken}
-            onChange={(e) => setFromToken(e.target.value)}
-          >
-            <option value="SOL">SOL</option>
-            <option value="ETH">ETH</option>
-            <option value="BTC">BTC</option>
-          </select>
-        </div>
-
-        <button
-          onClick={handleSwap}
-          className="py-2 px-4 bg-gray-700 text-gray-300 rounded-full hover:bg-gray-600 transition"
-        >
-          ⇅
-        </button>
-
-        <div className="flex-1">
-          <div className="w-full p-2 border border-gray-500 rounded-md bg-gray-700 text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <div className="flex items-center justify-between">
-              <span>TON </span>
-              <span className="text-gray-400">TONex</span>
-            </div>
+    <div className="synthetic-container w-full max-w-xl mx-auto p-4 sm:p-6 rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 shadow-2xl transition-all duration-300">
+      <div className="mb-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-bold text-white mb-1">
+              Synthetic Token
+            </h1>
+            <p className="text-gray-400 text-sm">
+              Convert tokens to TONex synthetic tokens
+            </p>
+          </div>
+          <div className="relative">
+            <button
+              onMouseEnter={() => setShowTooltip(true)}
+              onMouseLeave={() => setShowTooltip(false)}
+              className="p-2 rounded-full hover:bg-gray-700/50 transition-colors"
+            >
+              <InfoOutlinedIcon className="text-gray-400 hover:text-white transition-colors" />
+            </button>
+            {showTooltip && (
+              <div className="absolute right-0 mt-2 p-2 bg-gray-800 text-sm text-gray-300 rounded-lg shadow-xl z-10 w-64">
+                Create synthetic tokens on TON blockchain representing tokens
+                from other chains
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      <div className="mb-4 space-y-2">
-        <div className="relative">
-          <input
-            type="number"
-            className="w-full p-2 border border-gray-500 rounded-md bg-gray-700 text-2xl font-medium text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Amount"
-            value={amount}
-            onChange={(e) => handleAmountChange(e.target.value)}
-          />
+      {/* From Section */}
+      <div className="bg-gray-800/50 p-4 rounded-lg mb-2 hover:bg-gray-800/60 transition-colors">
+        <div className="flex justify-between mb-2">
+          <span className="text-gray-400 text-sm">From</span>
           <button
-            onClick={handleMaxClick}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-500 text-sm focus:outline-none"
+            onClick={handleMaxAmount}
+            className="flex items-center space-x-1 text-blue-400 text-sm hover:text-blue-300 transition-colors"
           >
-            Max
+            <AccountBalanceWalletOutlinedIcon className="w-4 h-4" />
+            <span>Balance: 1,000</span>
           </button>
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex gap-2 flex-col sm:flex-row">
+          <div className="flex-1">
+            <div className="relative group">
+              <select
+                value={fromChain}
+                onChange={handleFromChainChange}
+                className="w-full pl-10 pr-8 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-gray-500 transition-colors"
+              >
+                {chainData.map((chain) => (
+                  <option key={chain.chainID} value={chain.chainName}>
+                    {chain.chainName}
+                  </option>
+                ))}
+              </select>
+              <ArrowDropDownIcon className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-white transition-colors" />
+              <img
+                src={getChainImage(fromChain)}
+                alt=""
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full"
+              />
+            </div>
+          </div>
+
+          <div className="flex-1">
+            <div className="relative group">
+              <select
+                value={fromToken}
+                onChange={(e) => setFromToken(e.target.value)}
+                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-gray-500 transition-colors"
+              >
+                {fromTokens.map((token) => (
+                  <option key={token.ticker} value={token.ticker}>
+                    {token.ticker}
+                  </option>
+                ))}
+              </select>
+              <ArrowDropDownIcon className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-white transition-colors" />
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-3">
           <input
             type="text"
-            className="flex-1 p-2 border border-gray-500 rounded-md bg-gray-700 text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Amount in USD"
-            value={amountInUsd.toLocaleString()}
-            readOnly
+            value={amount}
+            onChange={handleAmountChange}
+            placeholder="0.0"
+            className="w-full bg-transparent text-2xl text-white placeholder-gray-500 focus:outline-none"
           />
+          <div className="text-gray-400 text-sm mt-1">
+            ≈ ${getUsdValue(amount).toLocaleString()}
+          </div>
         </div>
-        <button
-            className="w-full py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
-          >
-            Exchange
-          </button>
       </div>
+
+      {/* Arrow Icon */}
+      <div className="relative h-12 flex items-center justify-center">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-700"></div>
+        </div>
+        <div className="relative z-10 bg-gray-800 p-2 rounded-full">
+          <SwapVertIcon className="text-blue-400 w-6 h-6" />
+        </div>
+      </div>
+
+      {/* To Section (Fixed TON) */}
+      <div className="bg-gray-800/50 p-4 rounded-lg mt-2 hover:bg-gray-800/60 transition-colors">
+        <div className="mb-2">
+          <span className="text-gray-400 text-sm">To</span>
+        </div>
+
+        <div className="flex gap-2 flex-col sm:flex-row">
+          <div className="flex-1">
+            <div className="relative">
+              <div className="w-full pl-10 pr-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white cursor-not-allowed">
+                TON
+              </div>
+              <img
+                src={getChainImage("TON")}
+                alt="TON"
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full"
+              />
+            </div>
+          </div>
+
+          <div className="flex-1">
+            <div className="relative">
+              <div className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white cursor-not-allowed">
+                TONex
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-3">
+          <div className="text-2xl text-white">{amount || "0.0"}</div>
+          <div className="text-gray-400 text-sm mt-1">
+            ≈ ${getUsdValue(amount).toLocaleString()}
+          </div>
+        </div>
+      </div>
+
+      {/* Synthesize Button */}
+      <button
+        onClick={handleSynthesize}
+        disabled={!isFormValid() || isLoading}
+        className="w-full mt-6 py-4 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden"
+      >
+        {isLoading ? (
+          <div className="flex items-center justify-center space-x-2">
+            <div className="w-5 h-5 border-t-2 border-white rounded-full animate-spin" />
+            <span>Processing...</span>
+          </div>
+        ) : (
+          "Create Synthetic Token"
+        )}
+      </button>
     </div>
   );
 };
 
-export default SyntheticWallet;
+export default Synthetic;
