@@ -28,6 +28,10 @@ jobs:
   # Build job
   build:
     runs-on: ubuntu-latest
+    env:  
+      NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID }}
+      NEXT_PUBLIC_ENABLE_TESTNETS: true
+      NODE_ENV: development
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -86,6 +90,10 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    env:  
+      NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID }}
+      NEXT_PUBLIC_ENABLE_TESTNETS: true
+      NODE_ENV: development
     needs: build
     steps:
       - name: Deploy to GitHub Pages
