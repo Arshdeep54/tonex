@@ -2,10 +2,12 @@ import type { PropsWithChildren } from "react";
 import type { Metadata } from "next";
 import "./globals.css";
 import localFont from "next/font/local";
+import { MetaMaskProvider } from "@metamask/sdk-react";
 
 import "normalize.css/normalize.css";
 import "./_assets/globals.css";
 import { TonConnectUIProvider } from "@tonconnect/ui-react";
+import { EthereumProvider } from "@/hooks/useMetamask";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -29,7 +31,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-          {children}
+        <EthereumProvider>{children}</EthereumProvider>
       </body>
     </html>
   );
