@@ -17,7 +17,7 @@ import Collateral from "@/components/Collateral/page";
 import bridgeImage from "@/app/_assets/bridge.png";
 import { log } from "console";
 import WebApp from "@twa-dev/sdk";
-import { useEthereum } from "@/hooks/useMetamask";
+import {EthereumProvider, useEthereum } from "@/hooks/useMetamask";
 
 const Home = () => {
   const [activeView, setActiveView] = useState("creditScore");
@@ -37,21 +37,21 @@ const Home = () => {
     }
   }, []);
 
-  const { accounts, address, web3, connectWallet } = useEthereum();
+  const { connectWallet, accounts, isMetaMaskAvailable } = useEthereum();
 
-  const checkBalance = async () => {
-    if (!web3 || !address) {
-      alert("No wallet connected!");
-      return;
-    }
+  // const checkBalance = async () => {
+  //   if (!web3 || !address) {
+  //     alert("No wallet connected!");
+  //     return;
+  //   }
 
-    try {
-      const balance = await web3.eth.getBalance(address);
-      alert(`Balance: ${web3.utils.fromWei(balance, "ether")} ETH`);
-    } catch (error) {
-      console.error("Error fetching balance:", error);
-    }
-  };
+  //   try {
+  //     const balance = await web3.eth.getBalance(address);
+  //     alert(`Balance: ${web3.utils.fromWei(balance, "ether")} ETH`);
+  //   } catch (error) {
+  //     console.error("Error fetching balance:", error);
+  //   }
+  // };
   return (
     <>
       <TonConnectUIProvider manifestUrl="https://blush-major-turkey-395.mypinata.cloud/ipfs/QmetdVVHN5ttyi4tv4yGb3u6ugAihfu6ZjHUUfHhJz1ko7">
@@ -65,14 +65,27 @@ const Home = () => {
               <TonConnectButton className="ton-connect-button hover-scale transform-none sm:transform" />
             </div>
           </div>
-          {address ? (
-            <div>
-              <p>Connected Account: {address}</p>
-              <button onClick={checkBalance}>Check Balance</button>
+          {isMetaMaskAvailable ? (
+        <>
+          <button
+            onClick={connectWallet}
+            className="px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg text-white font-semibold"
+          >
+            {accounts?.length ? "Connected" : "Connect Wallet"}
+          </button>
+
+          {accounts && accounts.length > 0 && (
+            <div className="mt-4">
+              <p className="text-lg">Connected Account:</p>
+              <p className="text-sm text-gray-300">{accounts[0]}</p>
             </div>
-          ) : (
-            <button onClick={connectWallet}>Connect Wallet</button>
           )}
+        </>
+      ) : (
+        <p className="text-red-500">
+          MetaMask is not available. Please install MetaMask to connect your wallet.
+        </p>
+      )}
           {/* Middle View Section */}
           <div className="flex-grow px-3 sm:px-6 py-4 sm:py-6 gap-4 sm:gap-8 animate-slide-up overflow-y-auto pb-32">
             {activeView === "creditScore" && (

@@ -1,91 +1,74 @@
-'use client'
+"use client";
+
 import React, { createContext, useContext, useEffect, useState } from "react";
-import Web3 from "web3";
-import { MetaMaskSDK } from "@metamask/sdk";
+import detectEthereumProvider from "@metamask/detect-provider";
 
-type EthereumContextType = {
-  accounts: string[] | null;
-  address: string | null;
-  ethereum: any;
-  web3: Web3 | null;
+interface EthereumContextProps {
   connectWallet: () => Promise<void>;
-};
+  accounts: string[] | null;
+  isMetaMaskAvailable: boolean;
+}
 
-const EthereumContext = createContext<EthereumContextType | undefined>(
-  undefined
-);
+const EthereumContext = createContext<EthereumContextProps | undefined>(undefined);
 
-export const EthereumProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const EthereumProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [accounts, setAccounts] = useState<string[] | null>(null);
-  const [address, setAddress] = useState<string | null>(null);
-  const [ethereum, setEthereum] = useState<any>(null);
-  const [web3, setWeb3] = useState<Web3 | null>(null);
+  const [isMetaMaskAvailable, setIsMetaMaskAvailable] = useState(false);
 
   useEffect(() => {
-    const initEthereum = async () => {
-      const sdk = new MetaMaskSDK({
-        shouldShimWeb3: true,
-        dappMetadata: {
-          name: "Telegram Bot WebApp",
-          url: "https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=032",
-        },
-      });
-    
-      const ethProvider = sdk.getProvider();
-      setEthereum(ethProvider);
-    
-      if (ethProvider) {
-        const web3Instance = new Web3(ethProvider);
-        setWeb3(web3Instance);
-    
-        try {
-          const userAccounts = (await ethProvider.request({
-            method: "eth_accounts",
-          })) as string[]; // Explicitly assert type
-    
-          if (userAccounts && userAccounts.length > 0) {
-            setAccounts(userAccounts);
-            setAddress(userAccounts[0]);
-          }
-        } catch (error) {
-          console.error("Error fetching accounts", error);
-        }
+    const checkProvider = async () => {
+      const provider: any = await detectEthereumProvider();
+
+      if (provider) {
+        setIsMetaMaskAvailable(true);
+
+        // Listen for accounts changes
+        provider.on("accountsChanged", (newAccounts: string[]) => {
+          setAccounts(newAccounts);
+        });
+
+        // Optionally handle chain changes
+        provider.on("chainChanged", () => {
+          window.location.reload();
+        });
+
+        // Fetch initial accounts
+        const currentAccounts = await provider.request({ method: "eth_accounts" });
+        setAccounts(currentAccounts);
+      } else {
+        setIsMetaMaskAvailable(false);
+        console.error("MetaMask not available");
       }
     };
-    
 
-    initEthereum();
+    if (typeof window !== "undefined") {
+      checkProvider();
+    }
   }, []);
 
   const connectWallet = async () => {
-    if (!ethereum) {
-      console.error("MetaMask not available");
-      return;
-    }
-
     try {
-      const userAccounts = await ethereum.request({
-        method: "eth_requestAccounts",
-      });
-      setAccounts(userAccounts);
-      setAddress(userAccounts[0]);
+      const provider: any = await detectEthereumProvider();
+
+      if (!provider) {
+        throw new Error("MetaMask not found. Please install MetaMask.");
+      }
+
+      const newAccounts = await provider.request({ method: "eth_requestAccounts" });
+      setAccounts(newAccounts);
     } catch (error) {
-      console.error("Failed to connect wallet", error);
+      console.error("Failed to connect wallet:", error);
     }
   };
 
   return (
-    <EthereumContext.Provider
-      value={{ accounts, address, ethereum, web3, connectWallet }}
-    >
+    <EthereumContext.Provider value={{ connectWallet, accounts, isMetaMaskAvailable }}>
       {children}
     </EthereumContext.Provider>
   );
 };
 
-export const useEthereum = (): EthereumContextType => {
+export const useEthereum = (): EthereumContextProps => {
   const context = useContext(EthereumContext);
   if (!context) {
     throw new Error("useEthereum must be used within an EthereumProvider");
