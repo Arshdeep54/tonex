@@ -18,6 +18,7 @@ import bridgeImage from "@/app/_assets/bridge.png";
 import { log } from "console";
 import WebApp from "@twa-dev/sdk";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { WALLETCONNECT_PROJECT_ID } from "@/utils/config";
 
 const Home = () => {
   const [activeView, setActiveView] = useState("creditScore");
@@ -29,6 +30,8 @@ const Home = () => {
   const [name, setName] = useState<string | null>("User");
 
   useEffect(() => {
+    console.log({WALLETCONNECT_PROJECT_ID});
+    
     if (typeof window !== "undefined") {
       const firstName = WebApp.initDataUnsafe.user?.first_name || "";
       const lastName = WebApp.initDataUnsafe.user?.last_name || "";
@@ -49,6 +52,7 @@ const Home = () => {
               <TonConnectButton className="ton-connect-button hover-scale transform-none sm:transform" />
             </div>
             <div className="w-full sm:w-auto flex mt-2 justify-center">
+              h
               <ConnectButton accountStatus={"avatar"} chainStatus={"icon"} />
             </div>
           </div>
