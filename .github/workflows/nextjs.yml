@@ -29,9 +29,10 @@ jobs:
           CI: false
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
-          path: out # Upload the 'out' folder for deployment
+          name: github-pages # Name the artifact "github-pages"
+          path: out # Path to the output directory containing the static files
 
   deploy:
     runs-on: ubuntu-latest
@@ -40,8 +41,12 @@ jobs:
       pages: write # Required for deployment to GitHub Pages
       id-token: write
     steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: github-pages # Download the "github-pages" artifact uploaded in the build job
+
       - name: Deploy to GitHub Pages
-        id: deployment
         uses: actions/deploy-pages@v4
         with:
-          folder: out # Deploy the 'out' folder
+          folder: out # Deploy the contents of the 'out' folder
