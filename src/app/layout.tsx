@@ -2,11 +2,19 @@ import type { PropsWithChildren } from "react";
 import type { Metadata } from "next";
 import "./globals.css";
 import localFont from "next/font/local";
+import { WagmiProvider } from "wagmi";
+import {
+  darkTheme,
+  lightTheme,
+  RainbowKitProvider,
+} from "@rainbow-me/rainbowkit";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { config } from "../utils/config";
 
 import "normalize.css/normalize.css";
 import "./_assets/globals.css";
 import { TonConnectUIProvider } from "@tonconnect/ui-react";
-import Web3Provider from "@/providers/Web3Provider";
+// import Web3Provider from "@/providers/Web3Provider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -24,13 +32,28 @@ export const metadata: Metadata = {
   description: "Your application description goes here",
 };
 
+const queryClient = new QueryClient();
+
 export default async function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Web3Provider>{children}</Web3Provider>
+        {/* <WagmiProvider config={config}>
+          <QueryClientProvider client={queryClient}>
+            <RainbowKitProvider
+              theme={darkTheme({
+                accentColor: "#21C896",
+                accentColorForeground: "white",
+                borderRadius: "medium",
+                fontStack: "system",
+              })}
+            > */}
+        {children}
+        {/* </RainbowKitProvider>
+          </QueryClientProvider>
+        </WagmiProvider> */}
       </body>
     </html>
   );

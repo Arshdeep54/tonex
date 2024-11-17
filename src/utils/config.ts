@@ -1,3 +1,4 @@
+'use client'
 import { getDefaultWallets, getDefaultConfig } from "@rainbow-me/rainbowkit";
 import {
   argentWallet,
