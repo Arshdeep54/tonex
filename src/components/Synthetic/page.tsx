@@ -5,7 +5,6 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
 import data from "../tokenlist.json";
-import Image from "next/image";
 
 interface Token {
   name: string;
@@ -160,7 +159,7 @@ const Synthetic = () => {
                 ))}
               </select>
               <ArrowDropDownIcon className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-white transition-colors" />
-              <Image
+              <img
                 src={getChainImage(fromChain)}
                 alt=""
                 className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full"
@@ -222,7 +221,7 @@ const Synthetic = () => {
               <div className="w-full pl-10 pr-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white cursor-not-allowed">
                 TON
               </div>
-              <Image
+              <img
                 src={getChainImage("TON")}
                 alt="TON"
                 className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full"

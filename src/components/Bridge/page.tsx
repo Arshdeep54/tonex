@@ -1,11 +1,10 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import SwapVertIcon from "@mui/icons-material/SwapVert";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
 import data from "../tokenlist.json";
-import Image from "next/image";
 
 interface Token {
   name: string;
@@ -25,27 +24,25 @@ const chainData = data as unknown as ChainData[];
 const BridgeComponent = () => {
   const [fromChain, setFromChain] = useState<string>(chainData[0].chainName);
   const [toChain, setToChain] = useState<string>(chainData[1].chainName);
-  const [fromToken, setFromToken] = useState<string>(
-    chainData[0].tokens[0].ticker
-  );
+  const [fromToken, setFromToken] = useState<string>(chainData[0].tokens[0].ticker);
   const [toToken, setToToken] = useState<string>(chainData[1].tokens[0].ticker);
-  const [amount, setAmount] = useState<string>("");
+  const [amount, setAmount] = useState<string>('');
   const [fromTokens, setFromTokens] = useState<Token[]>(chainData[0].tokens);
   const [toTokens, setToTokens] = useState<Token[]>(chainData[1].tokens);
   const [isLoading, setIsLoading] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
 
   const getUsdValue = (amt: string): number => {
-    const value = parseFloat(amt || "0") * 100;
+    const value = parseFloat(amt || '0') * 100;
     return isNaN(value) ? 0 : value;
   };
 
   const handleFromChainChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const chain = e.target.value;
     const chainData = data.find((c) => c.chainName === chain);
-
+    
     if (!chainData) return;
-
+    
     setFromChain(chain);
     setFromTokens(chainData.tokens);
     if (chainData.tokens.length > 0) {
@@ -56,9 +53,9 @@ const BridgeComponent = () => {
   const handleToChainChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const chain = e.target.value;
     const chainData = data.find((c) => c.chainName === chain);
-
+    
     if (!chainData) return;
-
+    
     setToChain(chain);
     setToTokens(chainData.tokens);
     if (chainData.tokens.length > 0) {
@@ -73,8 +70,8 @@ const BridgeComponent = () => {
     if (!currentFromChainData || !currentToChainData) return;
 
     // Add animation class
-    const container = document.querySelector(".bridge-container");
-    container?.classList.add("swap-animation");
+    const container = document.querySelector('.bridge-container');
+    container?.classList.add('swap-animation');
 
     setTimeout(() => {
       setFromChain(toChain);
@@ -83,45 +80,40 @@ const BridgeComponent = () => {
       setToToken(fromToken);
       setFromTokens(toTokens);
       setToTokens(fromTokens);
-
+      
       // Remove animation class
-      container?.classList.remove("swap-animation");
+      container?.classList.remove('swap-animation');
     }, 300);
   };
 
   const handleMaxAmount = () => {
-    setAmount("1000");
+    setAmount('1000');
   };
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (value === "" || /^\d*\.?\d*$/.test(value)) {
+    if (value === '' || /^\d*\.?\d*$/.test(value)) {
       setAmount(value);
     }
   };
 
   const getChainImage = (chainName: string): string => {
     const chain = data.find((c) => c.chainName === chainName);
-    return (
-      chain?.img ||
-      "https://e7.pngegg.com/pngimages/944/167/png-clipart-blockchain-computer-icons-blockchain-miscellaneous-angle-thumbnail.png"
-    );
+    return chain?.img || 'https://e7.pngegg.com/pngimages/944/167/png-clipart-blockchain-computer-icons-blockchain-miscellaneous-angle-thumbnail.png';
   };
 
   const isFormValid = (): boolean => {
     const amountNum = parseFloat(amount);
-    return (
-      amount !== "" &&
-      !isNaN(amountNum) &&
-      amountNum > 0 &&
-      fromChain !== toChain &&
-      fromToken !== ""
-    );
+    return amount !== '' && 
+           !isNaN(amountNum) && 
+           amountNum > 0 && 
+           fromChain !== toChain &&
+           fromToken !== '';
   };
 
   const handleBridge = async () => {
     if (!isFormValid()) return;
-
+    
     setIsLoading(true);
     // Simulate API call
     setTimeout(() => {
@@ -136,9 +128,7 @@ const BridgeComponent = () => {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-bold text-white mb-1">Bridge</h1>
-            <p className="text-gray-400 text-sm">
-              Transfer tokens across chains
-            </p>
+            <p className="text-gray-400 text-sm">Transfer tokens across chains</p>
           </div>
           <div className="relative">
             <button
@@ -161,7 +151,7 @@ const BridgeComponent = () => {
       <div className="bg-gray-800/50 p-4 rounded-lg mb-2 hover:bg-gray-800/60 transition-colors">
         <div className="flex justify-between mb-2">
           <span className="text-gray-400 text-sm">From</span>
-          <button
+          <button 
             onClick={handleMaxAmount}
             className="flex items-center space-x-1 text-blue-400 text-sm hover:text-blue-300 transition-colors"
           >
@@ -169,7 +159,7 @@ const BridgeComponent = () => {
             <span>Balance: 1,000</span>
           </button>
         </div>
-
+        
         <div className="flex gap-2 flex-col sm:flex-row">
           <div className="flex-1">
             <div className="relative group">
@@ -178,21 +168,21 @@ const BridgeComponent = () => {
                 onChange={handleFromChainChange}
                 className="w-full pl-10 pr-8 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-gray-500 transition-colors"
               >
-                {chainData.map((chain) => (
+                {chainData.map(chain => (
                   <option key={chain.chainID} value={chain.chainName}>
                     {chain.chainName}
                   </option>
                 ))}
               </select>
               <ArrowDropDownIcon className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-white transition-colors" />
-              <Image
+              <img
                 src={getChainImage(fromChain)}
                 alt=""
                 className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full"
               />
             </div>
           </div>
-
+          
           <div className="flex-1">
             <div className="relative group">
               <select
@@ -200,7 +190,7 @@ const BridgeComponent = () => {
                 onChange={(e) => setFromToken(e.target.value)}
                 className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-gray-500 transition-colors"
               >
-                {fromTokens.map((token) => (
+                {fromTokens.map(token => (
                   <option key={token.ticker} value={token.ticker}>
                     {token.ticker}
                   </option>
@@ -240,7 +230,7 @@ const BridgeComponent = () => {
         <div className="mb-2">
           <span className="text-gray-400 text-sm">To</span>
         </div>
-
+        
         <div className="flex gap-2 flex-col sm:flex-row">
           <div className="flex-1">
             <div className="relative group">
@@ -249,21 +239,21 @@ const BridgeComponent = () => {
                 onChange={handleToChainChange}
                 className="w-full pl-10 pr-8 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-gray-500 transition-colors"
               >
-                {chainData.map((chain) => (
+                {chainData.map(chain => (
                   <option key={chain.chainID} value={chain.chainName}>
                     {chain.chainName}
                   </option>
                 ))}
               </select>
               <ArrowDropDownIcon className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-white transition-colors" />
-              <Image
+              <img
                 src={getChainImage(toChain)}
                 alt=""
                 className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full"
               />
             </div>
           </div>
-
+          
           <div className="flex-1">
             <div className="relative group">
               <select
@@ -271,7 +261,7 @@ const BridgeComponent = () => {
                 onChange={(e) => setToToken(e.target.value)}
                 className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-gray-500 transition-colors"
               >
-                {toTokens.map((token) => (
+                {toTokens.map(token => (
                   <option key={token.ticker} value={token.ticker}>
                     {token.ticker}
                   </option>
@@ -283,7 +273,9 @@ const BridgeComponent = () => {
         </div>
 
         <div className="mt-3">
-          <div className="text-2xl text-white">{amount || "0.0"}</div>
+          <div className="text-2xl text-white">
+            {amount || '0.0'}
+          </div>
           <div className="text-gray-400 text-sm mt-1">
             ≈ ${getUsdValue(amount).toLocaleString()}
           </div>
@@ -291,7 +283,7 @@ const BridgeComponent = () => {
       </div>
 
       {/* Bridge Button */}
-      <button
+      <button 
         onClick={handleBridge}
         disabled={!isFormValid() || isLoading}
         className="w-full mt-6 py-4 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden"
@@ -302,7 +294,7 @@ const BridgeComponent = () => {
             <span>Processing...</span>
           </div>
         ) : (
-          "Bridge Tokens"
+          'Bridge Tokens'
         )}
       </button>
     </div>
