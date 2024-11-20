@@ -4,27 +4,15 @@ import "./globals.css";
 import localFont from "next/font/local";
 
 import "normalize.css/normalize.css";
-import "./_assets/globals.css";
-import { TonConnectUIProvider } from "@tonconnect/ui-react";
-
-import { WagmiProvider } from "wagmi";
-import {
-  darkTheme,
-  lightTheme,
-  RainbowKitProvider,
-} from "@rainbow-me/rainbowkit";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { config } from "@/utils/config";
-
-const queryClient = new QueryClient();
+import Providers from "@/components/Providers"; // Import the new Providers component
 
 const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
+  src: "../_assets/fonts/GeistVF.woff",
   variable: "--font-geist-sans",
   weight: "100 900",
 });
 const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
+  src: "../_assets/fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
   weight: "100 900",
 });
@@ -34,26 +22,13 @@ export const metadata: Metadata = {
   description: "Your application description goes here",
 };
 
-export default async function RootLayout({ children }: PropsWithChildren) {
+export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-           <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider
-          theme={darkTheme({
-            accentColor: "#21C896",
-            accentColorForeground: "white",
-            borderRadius: "medium",
-            fontStack: "system",
-          })}
-        >
-          {children}
-        </RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+        <Providers>{children}</Providers> 
       </body>
     </html>
   );
