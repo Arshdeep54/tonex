@@ -7,12 +7,12 @@ import "normalize.css/normalize.css";
 import Providers from "@/components/Providers"; // Import the new Providers component
 
 const geistSans = localFont({
-  src: "../_assets/fonts/GeistVF.woff",
+  src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
   weight: "100 900",
 });
 const geistMono = localFont({
-  src: "../_assets/fonts/GeistMonoVF.woff",
+  src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
   weight: "100 900",
 });
